@@ -25,7 +25,8 @@ public class TargetPID extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driver.zeroSensors();
+    driver.resetEncoder();
+   
   }
 
   // Called every time the scheduler runs while the command is scheduled.

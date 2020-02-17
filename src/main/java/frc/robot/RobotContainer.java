@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.CommandDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Reset;
+import frc.robot.commands.StraightDrive;
 import frc.robot.commands.TargetPID;
 import frc.robot.subsystems.Driver;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -31,6 +33,8 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private final TargetPID pidT = new TargetPID(m_driver); 
   private final CommandDrive driver = new CommandDrive(m_driver);
+  private final Reset reset = new Reset(m_driver);
+  private final StraightDrive driveS = new StraightDrive(m_driver);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -39,7 +43,10 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     m_driver.setDefaultCommand(driver);
+    m_driver.reset();
   }
+
+  
 
   /**
    * Use this method to define your button->command mappings.  Buttons can be created by
@@ -50,8 +57,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     XboxController xbox = new XboxController(0);
     JoystickButton d_A = new JoystickButton(xbox, 1);
+    JoystickButton d_B = new JoystickButton(xbox, 2);
+    JoystickButton d_X = new JoystickButton(xbox, 3);
+    
 
     d_A.whenPressed(new TargetPID(m_driver));
+    d_B.whenPressed(new Reset(m_driver));
+    d_X.whenHeld(new StraightDrive(m_driver)); 
   }
 
 

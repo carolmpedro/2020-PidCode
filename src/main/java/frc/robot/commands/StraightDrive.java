@@ -7,26 +7,17 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Driver;
 
-public class CommandDrive extends CommandBase {
+public class StraightDrive extends CommandBase {
 
-  public static final double minR = 0.4D, difR = 0.5D;
-  
+  private final Driver driver_;
 
-  private final Driver driver;
-  private final XboxController xbox;
-  private double linearSpeed;
-  private double rotationSpeed;
-  /**
-   * Creates a new CommandDrive.
-   */
-  public CommandDrive(Driver driver_) {
-    xbox = new XboxController(0);
-    driver = driver_;
-    addRequirements(driver);
+  public StraightDrive(Driver drive) {
+    driver_ = drive;
+    addRequirements(driver_);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -38,18 +29,14 @@ public class CommandDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    this.rotationSpeed= xbox.getRawAxis(1);
-   
-    this.linearSpeed = xbox.getRawAxis(4);
-    this.arcadeDrive( this.rotationSpeed,this.linearSpeed);
+    if (driver_.getAngle() >= 5){
+      driver_.tankDriver(-0.5, 0.5);
+    } else if(driver_.getAngle() <= 5){
+      driver_.tankDriver(0.5, -0.5);
+    } else {
+      driver_.tankDriver(0.5, 0.5);
+    }
   }
-
-  public void arcadeDrive(double speed, double rotation) {
-		double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
-		double rate = Math.pow(rotation, 3) * modifier;
-		driver.tankDriver((speed + rate), rate - speed);
-	}
 
   // Called once the command ends or is interrupted.
   @Override

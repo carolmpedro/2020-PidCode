@@ -7,25 +7,17 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Driver;
 
-public class CommandDrive extends CommandBase {
-
-  public static final double minR = 0.4D, difR = 0.5D;
-  
+public class Reset extends CommandBase {
 
   private final Driver driver;
-  private final XboxController xbox;
-  private double linearSpeed;
-  private double rotationSpeed;
   /**
-   * Creates a new CommandDrive.
+   * Creates a new Reset.
    */
-  public CommandDrive(Driver driver_) {
-    xbox = new XboxController(0);
-    driver = driver_;
+  public Reset(Driver m_driver) {
+    driver = m_driver;
     addRequirements(driver);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -38,18 +30,9 @@ public class CommandDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    this.rotationSpeed= xbox.getRawAxis(1);
-   
-    this.linearSpeed = xbox.getRawAxis(4);
-    this.arcadeDrive( this.rotationSpeed,this.linearSpeed);
+    driver.reset();
+    driver.resetEncoder();
   }
-
-  public void arcadeDrive(double speed, double rotation) {
-		double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
-		double rate = Math.pow(rotation, 3) * modifier;
-		driver.tankDriver((speed + rate), rate - speed);
-	}
 
   // Called once the command ends or is interrupted.
   @Override

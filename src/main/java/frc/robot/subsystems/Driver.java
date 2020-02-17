@@ -31,9 +31,6 @@ public class Driver extends SubsystemBase {
   public Driver() {
     masterLeft.setNeutralMode(NeutralMode.Brake);
     masterRight.setNeutralMode(NeutralMode.Brake);
-    slaveRight.follow(masterRight);
-    slaveLeft.follow(masterLeft);
-
     masterRight.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
     masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
 
@@ -58,10 +55,13 @@ public void reset(){
 
 public void setPosition(double position){
   /* Configured for Position Closed loop on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
-  masterRight.set(ControlMode.Position, position, DemandType.AuxPID, 0.5);
+  masterRight.set(ControlMode.Position, position, DemandType.AuxPID, 0.7);
   masterLeft.follow(masterRight, FollowerType.AuxOutput1);
-  //masterLeft.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
-  //masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+  masterLeft.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
+  masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+  
+  slaveRight.follow(masterRight, FollowerType.AuxOutput1);
+  slaveLeft.follow(masterLeft, FollowerType.AuxOutput1);
   //masterRight.set(ControlMode.Position, position);
 }
 
@@ -113,7 +113,7 @@ public void setPosition(double position){
     /* Configure output and sensor direction */
     masterLeft.setInverted(false);
     masterLeft.setSensorPhase(true);
-    //masterRight.setInverted(true);
+    masterRight.setInverted(true);
     masterRight.setSensorPhase(true);
     
     /* Set status frame periods to ensure we don't have stale data */

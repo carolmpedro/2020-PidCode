@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.CommandDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Reseet;
 import frc.robot.commands.TargetPID;
 import frc.robot.subsystems.Driver;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private final TargetPID pidT = new TargetPID(m_driver); 
   private final CommandDrive driver = new CommandDrive(m_driver);
+  private final Reseet reset = new Reseet(m_driver);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -50,8 +52,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
     XboxController xbox = new XboxController(0);
     JoystickButton d_A = new JoystickButton(xbox, 1);
+    JoystickButton d_B = new JoystickButton(xbox, 2);
+    
 
     d_A.whenPressed(new TargetPID(m_driver));
+    d_B.whenPressed(new Reseet(m_driver));
   }
 
 

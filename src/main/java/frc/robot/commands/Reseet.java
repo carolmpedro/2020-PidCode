@@ -10,28 +10,26 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Driver;
 
-public class TargetPID extends CommandBase {
-
-  private final Driver driver;  
+public class Reseet extends CommandBase {
+  private final Driver driver;
   /**
-   * Creates a new TargetPID.
+   * Creates a new Reseet.
    */
-  public TargetPID(Driver m_driver) {
+  public Reseet(Driver m_driver) {
     driver = m_driver;
-    addRequirements(driver);
+    
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driver.zeroSensors();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driver.setPosition(10000);
+    driver.zeroSensors();
   }
 
   // Called once the command ends or is interrupted.

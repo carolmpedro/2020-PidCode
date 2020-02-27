@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.CommandDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GyroTurn;
+import frc.robot.commands.PIDGyro;
 import frc.robot.commands.Reseet;
 import frc.robot.commands.TargetPID;
 import frc.robot.subsystems.Driver;
@@ -26,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+
+  private double angle = 0;
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Driver m_driver = new Driver();
 
@@ -33,6 +37,10 @@ public class RobotContainer {
   private final TargetPID pidT = new TargetPID(m_driver); 
   private final CommandDrive driver = new CommandDrive(m_driver);
   private final Reseet reset = new Reseet(m_driver);
+  private final GyroTurn gyro = new GyroTurn(m_driver, 90);
+  private final PIDGyro gyroPID = new PIDGyro(90, m_driver);
+    
+  
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -53,10 +61,18 @@ public class RobotContainer {
     XboxController xbox = new XboxController(0);
     JoystickButton d_A = new JoystickButton(xbox, 1);
     JoystickButton d_B = new JoystickButton(xbox, 2);
+    JoystickButton d_X = new JoystickButton(xbox, 3);
+    JoystickButton d_Y = new JoystickButton(xbox, 4);
     
 
     d_A.whenPressed(new TargetPID(m_driver));
     d_B.whenPressed(new Reseet(m_driver));
+    d_X.whenPressed(new GyroTurn(m_driver, 90) );
+    d_Y.whenPressed(new PIDGyro(90, m_driver));
+  }
+
+  public void gyroC(){
+    m_driver.calibrate();
   }
 
 

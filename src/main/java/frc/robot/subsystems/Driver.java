@@ -17,15 +17,22 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PID.Constants;
 
 public class Driver extends SubsystemBase {
 
- private WPI_TalonSRX masterLeft = new WPI_TalonSRX(0);
- private WPI_TalonSRX slaveLeft  = new WPI_TalonSRX(2);
- private WPI_TalonSRX masterRight  = new WPI_TalonSRX(3);
- private WPI_TalonSRX slaveRight  = new WPI_TalonSRX(1);
+ private WPI_TalonSRX masterLeft = new WPI_TalonSRX(3);
+ private WPI_TalonSRX slaveLeft  = new WPI_TalonSRX(4);
+ private WPI_TalonSRX masterRight  = new WPI_TalonSRX(1);
+ private WPI_TalonSRX slaveRight  = new WPI_TalonSRX(2);
+
+ 
+ public static final double minR = 0.4D, difR = 0.5D;
+
+ private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
   
 
   public Driver() {
@@ -33,10 +40,34 @@ public class Driver extends SubsystemBase {
     masterRight.setNeutralMode(NeutralMode.Brake);
     masterRight.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
     masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+    
+    slaveRight.setInverted(true);
 
     zeroSensors();
     driverPIDinit();
   }
+
+
+public void arcadeDrive(double speed, double rotation) {
+  double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
+  double rate = Math.pow(rotation, 3) * modifier;
+ tankDriver(-(speed + rate), rate - speed);
+ 
+ slaveLeft.follow(masterLeft);
+ slaveRight.follow(masterRight);
+}
+
+public void calibrate(){
+  gyro.calibrate();
+}
+
+public void resetGyro(){
+  gyro.reset();
+}
+
+public double getAngle(){
+  return gyro.getAngle();
+}
 
 public void zeroSensors() {
 	masterLeft.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
@@ -170,6 +201,7 @@ public void setPosition(double position){
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("GetAngle", getAngle());
     // This method will be called once per scheduler run
   }
 }

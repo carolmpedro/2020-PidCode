@@ -13,7 +13,6 @@ import frc.robot.subsystems.Driver;
 
 public class CommandDrive extends CommandBase {
 
-  public static final double minR = 0.4D, difR = 0.5D;
   
 
   private final Driver driver;
@@ -40,14 +39,10 @@ public class CommandDrive extends CommandBase {
   public void execute() {
     this.linearSpeed = xbox.getRawAxis(1);
     this.rotationSpeed = xbox.getRawAxis(4);
-    this.arcadeDrive(this.linearSpeed , this.rotationSpeed);
+   driver.arcadeDrive(this.linearSpeed , this.rotationSpeed);
   }
 
-  public void arcadeDrive(double speed, double rotation) {
-		double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
-		double rate = Math.pow(rotation, 3) * modifier;
-		driver.tankDriver(-(speed + rate), rate - speed);
-	}
+  
 
   // Called once the command ends or is interrupted.
   @Override

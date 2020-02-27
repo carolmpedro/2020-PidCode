@@ -10,16 +10,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Driver;
 
-public class Reseet extends CommandBase {
-  private final Driver driver;
-  private final PIDGyro resetPID;
-  /**
-   * Creates a new Reseet.
-   */
-  public Reseet(Driver m_driver) {
-    driver = m_driver;
-    resetPID = new PIDGyro(0, driver);
-    
+public class GyroTurn extends CommandBase {
+
+  private final Driver m_driver;
+  
+  private double currentAngle;
+  private double targetAngle;
+
+  public GyroTurn(Driver driver, double angle) {
+    targetAngle = angle;
+    m_driver = driver;
+    addRequirements(m_driver);
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -31,11 +33,12 @@ public class Reseet extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //driver.zeroSensors();
-    driver.resetGyro();
-    resetPID.resetPID();
-    
-    
+    this.currentAngle = m_driver.getAngle();
+    if(this.targetAngle > 0 && this.currentAngle < this.targetAngle){
+      m_driver.tankDriver(-0.6, 0.6);
+    } else if(this.targetAngle < 0 && this.currentAngle < this.targetAngle){
+      m_driver.tankDriver(0.6, -0.6);
+    } else m_driver.tankDriver(0, 0);
   }
 
   // Called once the command ends or is interrupted.

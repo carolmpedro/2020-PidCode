@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.cscore.CameraServerCvJNI;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,7 +34,8 @@ public class Driver extends SubsystemBase {
  public static final double minR = 0.4D, difR = 0.5D;
 
  private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-  
+
+
 
   public Driver() {
     masterLeft.setNeutralMode(NeutralMode.Brake);
@@ -41,17 +43,19 @@ public class Driver extends SubsystemBase {
     masterRight.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
     masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
     
-    slaveRight.setInverted(true);
+    //slaveRight.setInverted(false);
+    slaveLeft.setInverted(false);
 
     zeroSensors();
     driverPIDinit();
   }
 
 
+
 public void arcadeDrive(double speed, double rotation) {
   double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
   double rate = Math.pow(rotation, 3) * modifier;
- tankDriver(-(speed + rate), rate - speed);
+ tankDriver((speed - rate), -(rate + speed));
  
  slaveLeft.follow(masterLeft);
  slaveRight.follow(masterRight);
@@ -144,7 +148,7 @@ public void setPosition(double position){
     /* Configure output and sensor direction */
     masterLeft.setInverted(false);
     masterLeft.setSensorPhase(true);
-    masterRight.setInverted(true);
+    masterRight.setInverted(false);
     masterRight.setSensorPhase(true);
     
     /* Set status frame periods to ensure we don't have stale data */

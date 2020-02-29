@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.PID;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -22,7 +22,7 @@ public class PIDGyro extends PIDCommand {
     
     super(
         // The controller that the command will use
-        new PIDController(0.01, 0.015, 0.0005),
+        new PIDController(0.01, 0.1, 0.0),
         // This should return the measurement
         driver::getAngle ,
         // This should return the setpoint (can also be a constant)

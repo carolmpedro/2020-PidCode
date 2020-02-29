@@ -8,44 +8,33 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Driver;
+import frc.robot.subsystems.Storage;
 
-public class Reseet extends CommandBase {
-  private final Driver driver;
-  private final PIDGyro resetPID;
-  /**
-   * Creates a new Reseet.
-   */
-  public Reseet(Driver m_driver) {
-    driver = m_driver;
-    resetPID = new PIDGyro(0, driver);
-    
-    // Use addRequirements() here to declare subsystem dependencies.
+public class SolenoidOn extends CommandBase {
+  
+  private final Storage storage;
+
+  public SolenoidOn(Storage storage_) {
+    storage = storage_;
+    addRequirements(storage);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //driver.zeroSensors();
-    driver.resetGyro();
-    resetPID.resetPID();
-    
-    
+    storage.solenoidOn(storage.stSolenoid);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return storage.stSolenoid = !storage.stSolenoid;
   }
 }

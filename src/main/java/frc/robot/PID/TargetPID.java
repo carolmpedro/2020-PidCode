@@ -5,40 +5,33 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.PID;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Driver;
 
-public class GyroTurn extends CommandBase {
+public class TargetPID extends CommandBase {
 
-  private final Driver m_driver;
-  
-  private double currentAngle;
-  private double targetAngle;
-
-  public GyroTurn(Driver driver, double angle) {
-    targetAngle = angle;
-    m_driver = driver;
-    addRequirements(m_driver);
-
+  private final Driver driver;  
+  /**
+   * Creates a new TargetPID.
+   */
+  public TargetPID(Driver m_driver) {
+    driver = m_driver;
+    addRequirements(driver);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driver.zeroSensors();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.currentAngle = m_driver.getAngle();
-    if(this.targetAngle > 0 && this.currentAngle < this.targetAngle){
-      m_driver.tankDriver(-0.6, 0.6);
-    } else if(this.targetAngle < 0 && this.currentAngle < this.targetAngle){
-      m_driver.tankDriver(0.6, -0.6);
-    } else m_driver.tankDriver(0, 0);
+    driver.setPosition(10000);
   }
 
   // Called once the command ends or is interrupted.

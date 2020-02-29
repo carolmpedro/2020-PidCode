@@ -7,39 +7,42 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Driver;
+import frc.robot.subsystems.ControlPanel;
 
-public class TargetPID extends CommandBase {
+public class ControlPanelMove extends CommandBase {
 
-  private final Driver driver;  
-  /**
-   * Creates a new TargetPID.
-   */
-  public TargetPID(Driver m_driver) {
-    driver = m_driver;
-    addRequirements(driver);
-    // Use addRequirements() here to declare subsystem dependencies.
+  private final ControlPanel controlPanel;
+  private double speed, time;
+  private Timer timer = new Timer();
+
+  public ControlPanelMove(ControlPanel control_, double speed_, double time_) {
+    controlPanel = control_;
+    speed = speed_;
+    time = time_;
+    addRequirements(controlPanel);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driver.zeroSensors();
+    timer.start();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driver.setPosition(10000);
+    if(timer.get() >= time){   
+     controlPanel.rotationPanel(0);
+    }
+     controlPanel.rotationPanel(speed);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    timer.stop();
+    timer.reset();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

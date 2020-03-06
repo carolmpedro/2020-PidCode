@@ -16,17 +16,12 @@ public class Storage extends SubsystemBase {
   public boolean stSolenoid = true;
   
   private VictorSP  storage = new VictorSP(2);
-  private Solenoid solenoidStorage = new Solenoid(0);
 
   public Storage() {
   }
 
   public void storageActive(double speed){
     storage.set(speed);
-  }
-
-  public void solenoidOn(boolean st){
-    solenoidStorage.set(st);
   }
 
   @Override

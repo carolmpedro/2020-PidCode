@@ -41,6 +41,7 @@ public class ControlPanelMove extends CommandBase {
   public void end(boolean interrupted) {
     timer.stop();
     timer.reset();
+    controlPanel.rotationPanel(0);
   }
 
   @Override

@@ -18,11 +18,11 @@ public class Climber extends SubsystemBase {
   private VictorSP climberUp = new VictorSP(4);
   private VictorSP climberUp_2 = new VictorSP(5);
 
-  private VictorSP elevator_1 = new VictorSP(6);
-  private VictorSP elevator_2 = new VictorSP(7);
+  private VictorSP elevator_1 = new VictorSP(7);
+  private VictorSP elevator_2 = new VictorSP(6);
 
-  private Encoder encoderElevator = new Encoder(5, 6);
-  private DigitalInput digitalInput = new DigitalInput(9);
+  private Encoder encoderElevator = new Encoder(5, 1);
+  //private DigitalInput digitalInput = new DigitalInput(0);
 
   public Climber() {
 
@@ -42,13 +42,13 @@ public class Climber extends SubsystemBase {
     return encoderElevator.getDistance();
   }
 
-  public boolean limitSwitchElevator(){
+ /* public boolean limitSwitchElevator(){
     return digitalInput.get();
-  }
+  }*/
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("elevator pulses", pulsesElevator());
-    SmartDashboard.putBoolean("status Elevator Limit Switch", limitSwitchElevator());
+   // SmartDashboard.putBoolean("status Elevator Limit Switch", limitSwitchElevator());
   }
 }

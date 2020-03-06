@@ -20,8 +20,7 @@ public class Intake extends SubsystemBase {
   private VictorSP slopeIntake = new VictorSP(1);
 
   private DigitalInput limitSwitchUp = new DigitalInput(7);
-  private DigitalInput limitSwitchDown = new DigitalInput(8);
-  
+  private DigitalInput limitSwitchDown = new DigitalInput(6);
 
   public Intake() {
   }
@@ -44,8 +43,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Status Limit Switch Left", limitSwitchDown());
-    SmartDashboard.putBoolean("Status Limit Switch Right", limitSwitchUp());
-    
+    SmartDashboard.putBoolean("Status Limit Switch Down", limitSwitchDown());
+    SmartDashboard.putBoolean("Status Limit Switch Up", limitSwitchUp());
   }
 }

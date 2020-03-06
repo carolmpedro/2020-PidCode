@@ -8,6 +8,7 @@
 package frc.robot.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.PID.Shooter_Move;
 import frc.robot.subsystems.Driver;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
@@ -23,7 +24,7 @@ public class SequentialAuto extends SequentialCommandGroup {
    * Creates a new SequentialAuto.
    */
   public SequentialAuto(Shooter shooter_, Storage storage_, Driver driver_) {  
-      super(new ShooterTimer(shooter_, storage_, 5), new DriverTimer(driver_, 4, -0.7, -0.7));
+      super( new ShooterTimer(shooter_, storage_, 6), new DriverTimer(driver_, 2, 0.5, -0.5));
 
     
     // Add your commands in the super() call, e.g.

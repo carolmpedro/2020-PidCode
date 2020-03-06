@@ -39,7 +39,7 @@ public class CommandDrive extends CommandBase {
   public void execute() {
     this.linearSpeed = xbox.getRawAxis(1);
     this.rotationSpeed = xbox.getRawAxis(4);
-   driver.arcadeDrive(this.linearSpeed , this.rotationSpeed);
+   driver.arcadeDrive(-this.rotationSpeed, this.linearSpeed );
   }
 
   

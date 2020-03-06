@@ -28,25 +28,31 @@ public class ShooterTimer extends CommandBase {
 
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
   }
 
   @Override
   public void execute() {
-    if(timer.get() >= time_){
-      storage.storageActive(0);
-      shooter.shooter(0);
-    } else{
-      storage.storageActive(0.6);
-      shooter.shooter(0.6);
+    shooter.moveToVelocity(10000);
+
+    if(timer.get() >= 3){
+      storage.storageActive(-0.6);
     }
   }
 
   @Override
   public void end(boolean interrupted) {
+    shooter.moveToVelocity(0);
+    storage.storageActive(0);
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    if(timer.get() >= time_){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

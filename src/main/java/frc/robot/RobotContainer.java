@@ -16,6 +16,7 @@ import frc.robot.buttons.JoystickPOVButton;
 import frc.robot.PID.GyroTurn;
 import frc.robot.PID.PIDGyro;
 import frc.robot.PID.Reseet;
+import frc.robot.PID.Shooter_Move;
 import frc.robot.PID.TargetPID;
 import frc.robot.autonomous.DriverTimer;
 import frc.robot.autonomous.SequentialAuto;
@@ -25,7 +26,7 @@ import frc.robot.commands.ControlPanelMove;
 import frc.robot.commands.Elevator;
 import frc.robot.commands.IntakeActive;
 import frc.robot.commands.RobotUp;
-import frc.robot.commands.SolenoidOn;
+import frc.robot.commands.ShooterMove;
 import frc.robot.commands.StorageOn;
 import frc.robot.commands.ToSlopeIntake;
 import frc.robot.subsystems.Climber;
@@ -39,8 +40,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 public class RobotContainer {
-
-  private double angle = 0;
 
   //subsystens
   private final Driver m_driver = new Driver();
@@ -63,50 +62,42 @@ public class RobotContainer {
   private final SequentialAuto sequentialAuto = new SequentialAuto(shooter, storage, m_driver);
 
   //Teleoperated Command
-  private final IntakeActive intakeActive = new IntakeActive(m_intake, 0, storage);
-  private final ToSlopeIntake slopeIntake = new ToSlopeIntake(m_intake);
-  private final SolenoidOn solenoid = new SolenoidOn(storage);
+  private final IntakeActive intakeActive = new IntakeActive(m_intake, 0, storage, shooter);
+  private final ToSlopeIntake slopeIntake = new ToSlopeIntake(m_intake, 0);
   private final StorageOn storageOn = new StorageOn(storage, 0);
   private final RobotUp robotUp = new RobotUp(climber);
   private final Elevator elevator = new Elevator(climber, 0);
   private final ControlPanelMove movePanel = new ControlPanelMove(controlPanel, 0, 0);
+  private final Shooter_Move shooter_move = new Shooter_Move(shooter);
 
   public RobotContainer() {
-    // Configure the button bindings
     configureButtonBindings();
     m_driver.setDefaultCommand(driver);
     climber.setDefaultCommand(robotUp);
   }
 
-  /**
-   * Use this method to define your button->command mappings.  Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
 
     //Xbox Controller
     XboxController xbox = new XboxController(0);
-
     JoystickButton d_A = new JoystickButton(xbox, 1);
     JoystickButton d_B = new JoystickButton(xbox, 2);
     JoystickButton d_X = new JoystickButton(xbox, 3);
     JoystickButton d_Y = new JoystickButton(xbox, 4);
     JoystickButton d_LB = new JoystickButton(xbox, 5);
     JoystickButton d_RB = new JoystickButton(xbox, 6);
-
     JoystickAxis axis_d_LT = new JoystickAxis(xbox, 2);
     JoystickAxis axis_d_RT = new JoystickAxis(xbox, 3);
-
     JoystickAxisButton d_LT = new JoystickAxisButton(axis_d_LT, false, 0.5);
     JoystickAxisButton d_RT = new JoystickAxisButton(axis_d_RT, false, 0.5);
 
     //Manche Controller
     Joystick manche = new Joystick(1);
-
     JoystickButton j_three = new JoystickButton(manche, 3);
-    JoystickButton j_fire = new JoystickButton(manche, 2);
+    JoystickButton j_fire = new JoystickButton(manche, 1);
+    JoystickButton j_four = new JoystickButton(manche, 4);
+    JoystickButton j_five = new JoystickButton(manche, 5);
+    JoystickButton j_six = new JoystickButton(manche, 6);
     JoystickPOVButton pov_1 = new JoystickPOVButton(manche, 1);
     JoystickPOVButton pov_2 = new JoystickPOVButton(manche, 5);
 
@@ -115,20 +106,20 @@ public class RobotContainer {
     //d_B.whenPressed(new Reseet(m_driver));
     //d_X.whenPressed(new GyroTurn(m_driver, 90) );
     d_Y.whenPressed(new PIDGyro(90, m_driver));
+    j_four.whileHeld(new Shooter_Move(shooter));
+    d_X.whenPressed(new SequentialAuto(shooter, storage, m_driver));
 
     //Teleoperated Buttons
-    d_LT.whileHeld(new IntakeActive(m_intake, 0.5, storage));
-    d_RT.whileHeld(new IntakeActive(m_intake, -0.5, storage));
-    j_three.whenPressed(new ToSlopeIntake(m_intake));
-
-    d_X.whenPressed(new SolenoidOn(storage));  
-    d_LB.whenPressed(new StorageOn(storage, 0.5));
-    d_RB.whenPressed(new StorageOn(storage, -0.5));
-
-    pov_1.whenPressed(new Elevator(climber, 0.5));
-    pov_2.whenPressed(new Elevator(climber, -0.5));
-
-    d_B.whenPressed(new ControlPanelMove(controlPanel, 0.4, 6));
+    d_LT.whileHeld(new IntakeActive(m_intake, 0.8, storage, shooter));
+    d_RT.whileHeld(new IntakeActive(m_intake, 0.8, storage, shooter));
+    j_five.whileHeld(new ToSlopeIntake(m_intake, 1));
+    j_six.whileHeld(new ToSlopeIntake(m_intake, -0.5)); 
+    d_LB.whileHeld(new StorageOn(storage, 0.5));
+    d_RB.whileHeld(new StorageOn(storage, -0.5));
+    pov_1.whileHeld(new Elevator(climber, 0.5));
+    pov_2.whileHeld(new Elevator(climber, -0.5));
+    d_B.whileHeld(new ControlPanelMove(controlPanel, 0.4, 0.5));
+    j_fire.whileHeld(new ShooterMove(shooter, storage));
   }
 
   public void gyroC(){

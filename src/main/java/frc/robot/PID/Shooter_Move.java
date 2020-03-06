@@ -5,36 +5,45 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.PID;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Storage;
+import frc.robot.subsystems.Shooter;
 
-public class SolenoidOn extends CommandBase {
+public class Shooter_Move extends CommandBase {
+
+  private final Shooter shooter;
+  /**
+   * Creates a new ShooterMove.
+   */
+  public Shooter_Move(Shooter m_shooter) {
+    shooter = m_shooter;
+    addRequirements(shooter);
   
-  private final Storage storage;
-
-  public SolenoidOn(Storage storage_) {
-    storage = storage_;
-    addRequirements(storage);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //shooter.resetEncoder();
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    storage.solenoidOn(storage.stSolenoid);
-  }
+    shooter.moveToVelocity(10000);
+    }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    shooter.moveToVelocity(0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return storage.stSolenoid = !storage.stSolenoid;
+    return false;
   }
 }

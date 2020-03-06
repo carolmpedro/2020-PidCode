@@ -28,7 +28,7 @@ public class Elevator extends CommandBase {
 
   @Override
   public void execute() {
-    if(speed < 0){
+    /*if(speed < 0){
       if(climber.limitSwitchElevator()){
         climber.elevatorMove(speed);
         } else {         
@@ -36,7 +36,7 @@ public class Elevator extends CommandBase {
         }
     } else {
       climber.elevatorMove(speed);
-    }
+    }*/
 
   }
 

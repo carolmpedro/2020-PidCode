@@ -28,13 +28,16 @@ public class ShooterMove extends CommandBase {
 
   @Override
   public void execute() {
-    shooter.shooter(0.6);
-    storage.storageActive(0.5);
+    shooter.shooter(0.8);
+    //storage.storageActive(-0.5);
 
   }
 
   @Override
   public void end(boolean interrupted) {
+    
+    shooter.shooter(0);
+    storage.storageActive(0);
   }
 
   @Override

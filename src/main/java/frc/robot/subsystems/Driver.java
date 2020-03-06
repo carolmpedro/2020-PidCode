@@ -21,14 +21,14 @@ import edu.wpi.cscore.CameraServerCvJNI;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.PID.Constants;
+import frc.robot.PID.Constants_Position;
 
 public class Driver extends SubsystemBase {
 
- private WPI_TalonSRX masterLeft = new WPI_TalonSRX(3);
- private WPI_TalonSRX slaveLeft  = new WPI_TalonSRX(4);
- private WPI_TalonSRX masterRight  = new WPI_TalonSRX(1);
- private WPI_TalonSRX slaveRight  = new WPI_TalonSRX(2);
+ private WPI_TalonSRX masterLeft = new WPI_TalonSRX(2);
+ private WPI_TalonSRX slaveLeft  = new WPI_TalonSRX(1);
+ private WPI_TalonSRX masterRight  = new WPI_TalonSRX(4);
+ private WPI_TalonSRX slaveRight  = new WPI_TalonSRX(3);
 
  
  public static final double minR = 0.4D, difR = 0.5D;
@@ -40,8 +40,8 @@ public class Driver extends SubsystemBase {
   public Driver() {
     masterLeft.setNeutralMode(NeutralMode.Brake);
     masterRight.setNeutralMode(NeutralMode.Brake);
-    masterRight.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
-    masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+    masterRight.selectProfileSlot(Constants_Position.kSlot_Distanc, Constants_Position.PID_PRIMARY);
+    masterRight.selectProfileSlot(Constants_Position.kSlot_Turning, Constants_Position.PID_TURN);
     
     //slaveRight.setInverted(false);
     slaveLeft.setInverted(false);
@@ -55,7 +55,7 @@ public class Driver extends SubsystemBase {
 public void arcadeDrive(double speed, double rotation) {
   double modifier = minR + difR * Math.pow(1 - Math.abs(speed), 2);
   double rate = Math.pow(rotation, 3) * modifier;
- tankDriver((speed - rate), -(rate + speed));
+ tankDriver(-(speed - rate), -(rate + speed));
  
  slaveLeft.follow(masterLeft);
  slaveRight.follow(masterRight);
@@ -74,8 +74,8 @@ public double getAngle(){
 }
 
 public void zeroSensors() {
-	masterLeft.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-	masterRight.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+	masterLeft.getSensorCollection().setQuadraturePosition(0, Constants_Position.kTimeoutMs);
+	masterRight.getSensorCollection().setQuadraturePosition(0, Constants_Position.kTimeoutMs);
 }
  
 public void tankDriver(double spR, double spL){
@@ -84,16 +84,16 @@ public void tankDriver(double spR, double spL){
 }
 
 public void reset(){
-  masterLeft.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-  masterRight.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+  masterLeft.getSensorCollection().setQuadraturePosition(0, Constants_Position.kTimeoutMs);
+  masterRight.getSensorCollection().setQuadraturePosition(0, Constants_Position.kTimeoutMs);
 }
 
 public void setPosition(double position){
   /* Configured for Position Closed loop on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
   masterRight.set(ControlMode.Position, position, DemandType.AuxPID, 0.7);
   masterLeft.follow(masterRight, FollowerType.AuxOutput1);
-  masterLeft.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
-  masterRight.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+  masterLeft.selectProfileSlot(Constants_Position.kSlot_Distanc, Constants_Position.PID_PRIMARY);
+  masterRight.selectProfileSlot(Constants_Position.kSlot_Turning, Constants_Position.PID_TURN);
   
   slaveRight.follow(masterRight, FollowerType.AuxOutput1);
   slaveLeft.follow(masterLeft, FollowerType.AuxOutput1);
@@ -110,40 +110,40 @@ public void setPosition(double position){
     masterLeft.configFactoryDefault();
     
     masterLeft.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
-                          Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
-                          Constants.kTimeoutMs);					// Configuration Timeout
+                          Constants_Position.PID_PRIMARY,					// PID Slot for Source [0, 1]
+                          Constants_Position.kTimeoutMs);					// Configuration Timeout
    
     /* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
     masterRight.configRemoteFeedbackFilter(masterLeft.getDeviceID(),					// Device ID of Source
                         RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
-                        Constants.REMOTE_1,							// Source number [0, 1]
-                        Constants.kTimeoutMs);						// Configuration Timeout
+                        Constants_Position.REMOTE_1,							// Source number [0, 1]
+                        Constants_Position.kTimeoutMs);						// Configuration Timeout
     
     /* Setup Sum signal to be used for Distance */
-    masterRight.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-    masterRight.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+    masterRight.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, Constants_Position.kTimeoutMs);				// Feedback Device of Remote Talon
+    masterRight.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants_Position.kTimeoutMs);	// Quadrature Encoder of current Talon
     
     /* Setup Difference signal to be used for Turn */
-    masterRight.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);
-    masterRight.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);
+    masterRight.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, Constants_Position.kTimeoutMs);
+    masterRight.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants_Position.kTimeoutMs);
     
     /* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
     masterRight.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
-                          Constants.PID_PRIMARY,
-                          Constants.kTimeoutMs);
+                          Constants_Position.PID_PRIMARY,
+                          Constants_Position.kTimeoutMs);
     
     /* Scale Feedback by 0.5 to half the sum of Distance */
     masterRight.configSelectedFeedbackCoefficient(	0.5, 						// Coefficient
-                            Constants.PID_PRIMARY,		// PID Slot of Source 
-                            Constants.kTimeoutMs);		// Configuration Timeout
+                            Constants_Position.PID_PRIMARY,		// PID Slot of Source 
+                            Constants_Position.kTimeoutMs);		// Configuration Timeout
     
     /* Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index */
     masterRight.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
-                          Constants.PID_TURN, 
-                          Constants.kTimeoutMs);
+                          Constants_Position.PID_TURN, 
+                          Constants_Position.kTimeoutMs);
     
     /* Scale the Feedback Sensor using a coefficient */
-    masterRight.configSelectedFeedbackCoefficient(1, Constants.PID_TURN, Constants.kTimeoutMs);
+    masterRight.configSelectedFeedbackCoefficient(1, Constants_Position.PID_TURN, Constants_Position.kTimeoutMs);
     
     /* Configure output and sensor direction */
     masterLeft.setInverted(false);
@@ -152,38 +152,38 @@ public void setPosition(double position){
     masterRight.setSensorPhase(true);
     
     /* Set status frame periods to ensure we don't have stale data */
-    masterRight.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-    masterRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-    masterRight.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-    masterLeft.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    masterRight.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants_Position.kTimeoutMs);
+    masterRight.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants_Position.kTimeoutMs);
+    masterRight.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants_Position.kTimeoutMs);
+    masterLeft.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants_Position.kTimeoutMs);
    
     /* Configure neutral deadband */
-    masterRight.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-    masterLeft.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+    masterRight.configNeutralDeadband(Constants_Position.kNeutralDeadband, Constants_Position.kTimeoutMs);
+    masterLeft.configNeutralDeadband(Constants_Position.kNeutralDeadband, Constants_Position.kTimeoutMs);
    
     /* Max out the peak output (for all modes).  
      * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
      */
-    masterLeft.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-    masterLeft.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-    masterRight.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-    masterRight.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+    masterLeft.configPeakOutputForward(+1.0, Constants_Position.kTimeoutMs);
+    masterLeft.configPeakOutputReverse(-1.0, Constants_Position.kTimeoutMs);
+    masterRight.configPeakOutputForward(+1.0, Constants_Position.kTimeoutMs);
+    masterRight.configPeakOutputReverse(-1.0, Constants_Position.kTimeoutMs);
    
     /* FPID Gains for distance servo */
-    masterRight.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
-    masterRight.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
-    masterRight.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
-    masterRight.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
-    masterRight.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-    masterRight.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
+    masterRight.config_kP(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kP, Constants_Position.kTimeoutMs);
+    masterRight.config_kI(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kI, Constants_Position.kTimeoutMs);
+    masterRight.config_kD(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kD, Constants_Position.kTimeoutMs);
+    masterRight.config_kF(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kF, Constants_Position.kTimeoutMs);
+    masterRight.config_IntegralZone(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kIzone, Constants_Position.kTimeoutMs);
+    masterRight.configClosedLoopPeakOutput(Constants_Position.kSlot_Distanc, Constants_Position.kGains_Distanc.kPeakOutput, Constants_Position.kTimeoutMs);
    
     /* FPID Gains for turn servo */
-    masterRight.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-    masterRight.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-    masterRight.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-    masterRight.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-    masterRight.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-    masterRight.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
+    masterRight.config_kP(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kP, Constants_Position.kTimeoutMs);
+    masterRight.config_kI(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kI, Constants_Position.kTimeoutMs);
+    masterRight.config_kD(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kD, Constants_Position.kTimeoutMs);
+    masterRight.config_kF(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kF, Constants_Position.kTimeoutMs);
+    masterRight.config_IntegralZone(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kIzone, Constants_Position.kTimeoutMs);
+    masterRight.configClosedLoopPeakOutput(Constants_Position.kSlot_Turning, Constants_Position.kGains_Turning.kPeakOutput, Constants_Position.kTimeoutMs);
       
     /* 1ms per loop.  PID loop can be slowed down if need be.
      * For example,
@@ -192,14 +192,14 @@ public void setPosition(double position){
      * - sensor movement is very slow causing the derivative error to be near zero.
      */
         int closedLoopTimeMs = 1;
-        masterRight.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-        masterRight.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+        masterRight.configClosedLoopPeriod(0, closedLoopTimeMs, Constants_Position.kTimeoutMs);
+        masterRight.configClosedLoopPeriod(1, closedLoopTimeMs, Constants_Position.kTimeoutMs);
    
     /* configAuxPIDPolarity(boolean invert, int timeoutMs)
      * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
      * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
      */
-    masterRight.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+    masterRight.configAuxPIDPolarity(false, Constants_Position.kTimeoutMs);
    
    }
 
